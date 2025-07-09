@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:20-alpine AS base
 
 RUN apk update && \
     apk add --no-cache git ffmpeg wget curl bash openssl
@@ -9,6 +9,8 @@ LABEL contact="contato@evolution-api.com"
 
 WORKDIR /evolution
 
+FROM base AS builder
+
 COPY ./package.json ./tsconfig.json ./
 
 RUN npm install
@@ -17,7 +19,7 @@ COPY ./src ./src
 COPY ./public ./public
 COPY ./prisma ./prisma
 COPY ./manager ./manager
-COPY ./.env.example ./.env
+#COPY ./.env.example ./.env
 COPY ./runWithProvider.js ./
 COPY ./tsup.config.ts ./
 
@@ -28,6 +30,17 @@ RUN chmod +x ./Docker/scripts/* && dos2unix ./Docker/scripts/*
 RUN ./Docker/scripts/generate_database.sh
 
 RUN npm run build
+
+FROM base AS dev
+
+RUN apk update && \
+    apk add git ffmpeg wget curl bash openssl
+
+COPY . .
+
+RUN npm install
+
+ENTRYPOINT ["/bin/bash", "-c", "npm run dev:server" ]
 
 FROM node:20-alpine AS final
 
@@ -46,7 +59,7 @@ COPY --from=builder /evolution/dist ./dist
 COPY --from=builder /evolution/prisma ./prisma
 COPY --from=builder /evolution/manager ./manager
 COPY --from=builder /evolution/public ./public
-COPY --from=builder /evolution/.env ./.env
+#COPY --from=builder /evolution/.env ./.env
 COPY --from=builder /evolution/Docker ./Docker
 COPY --from=builder /evolution/runWithProvider.js ./runWithProvider.js
 COPY --from=builder /evolution/tsup.config.ts ./tsup.config.ts

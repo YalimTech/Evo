@@ -1,7 +1,11 @@
+version: "3.7"
 services:
   api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final
     container_name: evolution_api
-    image: evoapicloud/evolution-api:latest
     restart: always
     depends_on:
       - redis
@@ -11,16 +15,14 @@ services:
     volumes:
       - evolution_instances:/evolution/instances
     networks:
-      - evolution-net
-    env_file:
-      - .env
+      - Docker
     expose:
       - 8080
 
   redis:
     image: redis:latest
     networks:
-      - evolution-net
+      - Docker
     container_name: redis
     command: >
       redis-server --port 6379 --appendonly yes
@@ -33,14 +35,14 @@ services:
     container_name: postgres
     image: postgres:15
     networks:
-      - evolution-net
-    command: ["postgres", "-c", "max_connections=1000", "-c", "listen_addresses=*"]
+      - Docker
+    #command: ["postgres", "-c", "max_connections=1000", "-c", "listen_addresses=*"]
     restart: always
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
+      - POSTGRES_USER=evolution
+      - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=evolution
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
@@ -55,6 +57,6 @@ volumes:
 
 
 networks:
-  evolution-net:
-    name: evolution-net
-    driver: bridge
+  Docker: ## Nome da rede interna
+    external: true
+    name: Docker ## Nome da rede interna
