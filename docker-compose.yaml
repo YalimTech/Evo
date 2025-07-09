@@ -39,8 +39,8 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=kxpwixuandjay7wxb
       - POSTGRES_DB=evolution
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
@@ -59,4 +59,3 @@ networks:
   evolution-net:
     name: evolution-net
     driver: bridge
-
