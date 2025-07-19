@@ -1,5 +1,5 @@
 services:
-  api:
+  evolution-api:
     container_name: evolution_api
     image: evoapicloud/evolution-api:latest
     restart: always
@@ -54,4 +54,5 @@ networks:
   evolution-net:
     name: evolution-net
     driver: bridge
+
 
