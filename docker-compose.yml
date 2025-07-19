@@ -12,8 +12,7 @@ services:
       - evolution_instances:/evolution/instances
     networks:
       - evolution-net
-    env_file:
-      - .env
+    
     expose:
       - 8080
 
@@ -39,7 +38,6 @@ services:
     ports:
       - 5432:5432
     environment:
-       environment:
       - POSTGRES_DB=${POSTGRES_DATABASE}
       - POSTGRES_USER=${POSTGRES_USERNAME}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
