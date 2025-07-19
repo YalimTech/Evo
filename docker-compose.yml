@@ -1,5 +1,5 @@
 services:
-  app:
+  api:
     container_name: evolution_api
     image: evoapicloud/evolution-api:latest
     restart: always
